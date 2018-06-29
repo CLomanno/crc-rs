@@ -18,6 +18,11 @@
 //! let mut digest = crc16::Digest::new_with_initial(crc16::X25, 0u16);
 //! digest.write(b"123456789");
 //! assert_eq!(digest.sum16(), 0x906e);
+//!
+//! // with reflect bool and final XOR
+//! let mut digest = crc16::Digest::new_custom(crc16::X25, 0xFFFF, crc16::CalcType::Reverse, 0xFFFF);
+//! digest.write(b"123456789");
+//! assert_eq!(digest.sum16(), 0x906e);
 //! ```
 //!
 //! ### Compute CRC32
@@ -38,6 +43,11 @@
 //! let mut digest = crc32::Digest::new_with_initial(crc32::IEEE, 0u32);
 //! digest.write(b"123456789");
 //! assert_eq!(digest.sum32(), 0xcbf43926);
+//!
+//! // with initial, reflect, and XOR
+//! let mut digest = crc32::Digest::new_custom(crc32::IEEE, !0u32, crc32::CalcType::Reverse, !0u32);
+//! digest.write(b"123456789");
+//! assert_eq!(digest.sum32(), 0xcbf43926);
 //! ```
 //!
 //! ### Compute CRC64
@@ -56,8 +66,12 @@
 //! let mut digest = crc64::Digest::new_with_initial(crc64::ECMA, 0u64);
 //! digest.write(b"123456789");
 //! assert_eq!(digest.sum64(), 0x995dc9bbdf1939fa);
+//!
+//! // with initial, reflect, and XOR
+//! let mut digest = crc64::Digest::new_custom(crc64::ECMA, 0xFFFFFFFFFFFFFFFF, crc64::CalcType::Reverse, 0xFFFFFFFFFFFFFFFF);
+//! digest.write(b"123456789");
+//! assert_eq!(digest.sum64(), 0x995dc9bbdf1939fa);
 //! ```
-
 #![cfg_attr(not(feature = "std"), no_std)]
 
 pub mod crc16;

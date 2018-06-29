@@ -47,7 +47,10 @@ mod crc32 {
 
     #[test]
     fn checksum_castagnoli() {
-        assert_eq!(crc32::checksum_castagnoli(b"123456789"), CASTAGNOLI_CHECK_VALUE)
+        assert_eq!(
+            crc32::checksum_castagnoli(b"123456789"),
+            CASTAGNOLI_CHECK_VALUE
+        )
     }
 
     #[test]
@@ -113,12 +116,49 @@ mod crc64 {
     }
 
     #[test]
+    fn digest_ecma_initial() {
+        verify_checksum2(crc64::ECMA, ECMA_CHECK_VALUE);
+    }
+
+    #[test]
+    fn digest_ecma_custom() {
+        verify_checksum3(crc64::ECMA, ECMA_CHECK_VALUE);
+    }
+
+    #[test]
     fn digest_iso() {
         verify_checksum(crc64::ISO, ISO_CHECK_VALUE);
     }
 
     fn verify_checksum(poly: u64, check_value: u64) {
         let mut digest = crc64::Digest::new(poly);
+        digest.write(b"123456789");
+        assert_eq!(digest.sum64(), check_value);
+        digest.reset();
+        for i in 1..10 {
+            digest.write(i.to_string().as_bytes());
+        }
+        assert_eq!(digest.sum64(), check_value);
+    }
+
+    fn verify_checksum2(poly: u64, check_value: u64) {
+        let mut digest = crc64::Digest::new_with_initial(poly, 0u64);
+        digest.write(b"123456789");
+        assert_eq!(digest.sum64(), check_value);
+        digest.reset();
+        for i in 1..10 {
+            digest.write(i.to_string().as_bytes());
+        }
+        assert_eq!(digest.sum64(), check_value);
+    }
+
+    fn verify_checksum3(poly: u64, check_value: u64) {
+        let mut digest = crc64::Digest::new_custom(
+            poly,
+            0xFFFFFFFFFFFFFFFF,
+            crc64::CalcType::Reverse,
+            0xFFFFFFFFFFFFFFFF,
+        );
         digest.write(b"123456789");
         assert_eq!(digest.sum64(), check_value);
         digest.reset();
