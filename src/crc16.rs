@@ -36,18 +36,18 @@ pub fn update(mut value: u16, table: &[u16; 256], bytes: &[u8], calc: &CalcType)
     match calc {
         CalcType::Normal => {
             value = bytes.iter().fold(value, |acc, &x| {
-                (acc << 8) ^ (table[((u16::from(x)) ^ (acc >> 8)) as usize])
+                (acc << 8) ^ (table[usize::from((u16::from(x)) ^ (acc >> 8))])
             })
         }
         CalcType::Reverse => {
             value = bytes.iter().fold(value, |acc, &x| {
-                (acc >> 8) ^ (table[((acc ^ (u16::from(x))) & 0xFF) as usize])
+                (acc >> 8) ^ (table[usize::from((acc ^ (u16::from(x))) & 0xFF)])
             })
         }
         CalcType::Compat => {
             value = !value;
             value = bytes.iter().fold(value, |acc, &x| {
-                (acc >> 8) ^ (table[((acc ^ (u16::from(x))) & 0xFF) as usize])
+                (acc >> 8) ^ (table[usize::from((acc ^ (u16::from(x))) & 0xFF)])
             });
             value = !value;
         }

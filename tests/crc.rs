@@ -98,10 +98,6 @@ mod crc64 {
 
     #[test]
     fn checksum_ecma() {
-        let digest = crc64.ECMA;
-        
-        crc64::checksum_ecma(b"123456789"), ECMA_CHECK_VALUE)
-
         assert_eq!(crc64::checksum_ecma(b"123456789"), ECMA_CHECK_VALUE)
     }
 
